@@ -1,188 +1,95 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cat Health Checker</title>
+"use client";
+import React, { useState } from 'react';
+import { Search, AlertTriangle, ShieldCheck, Clock } from 'lucide-react';
 
-<style>
+// 模拟猫咪疾病数据库
+const DISEASES = [
+  { id: 1, name: "猫感冒 (URI)", symptoms: "打喷嚏, 流鼻涕, 咳嗽", severity: "中等", color: "bg-yellow-100 text-yellow-800", advice: "保持温暖，观察食欲，建议咨询兽医。" },
+  { id: 2, name: "猫传腹 (FIP)", symptoms: "腹部肿大, 持续发烧, 精神萎靡", severity: "极高", color: "bg-red-100 text-red-800", advice: "立即就医！这是一种危及生命的疾病。" },
+  { id: 3, name: "毛球症", symptoms: "干呕, 便秘, 食欲不振", severity: "低", color: "bg-green-100 text-green-800", advice: "喂食化毛膏，增加饮水。" },
+  { id: 4, name: "尿路感染 (UTI)", symptoms: "排尿困难, 尿血, 频繁舔舐私部", severity: "高", color: "bg-orange-100 text-orange-800", advice: "尽快就医，防止引发尿毒症。" },
+];
 
-body{
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
-background:#eef2f7;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-margin:0;
+export default function CatHealthChecker() {
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState([]);
+
+  const handleSearch = (e) => {
+    const val = e.target.value;
+    setQuery(val);
+    if (val.length > 0) {
+      const filtered = DISEASES.filter(d => 
+        d.symptoms.includes(val) || d.name.toLowerCase().includes(val.toLowerCase())
+      );
+      setResults(filtered);
+    } else {
+      setResults([]);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-50 p-6 font-sans">
+      {/* 头部 UI */}
+      <header className="max-w-2xl mx-auto text-center mb-10">
+        <h1 className="text-3xl font-bold text-slate-800 mb-2">🐱 猫咪健康助手</h1>
+        <p className="text-slate-500">输入症状（如：发烧、咳嗽）快速评估健康风险</p>
+      </header>
+
+      {/* 搜索框 */}
+      <div className="max-w-2xl mx-auto mb-8 relative">
+        <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+          <Search className="text-slate-400 w-5 h-5" />
+        </div>
+        <input
+          type="text"
+          className="w-full p-4 pl-10 rounded-2xl border-none shadow-lg focus:ring-2 focus:ring-orange-400 transition-all outline-none"
+          placeholder="例如：打喷嚏..."
+          value={query}
+          onChange={handleSearch}
+        />
+      </div>
+
+      {/* 结果展示区 */}
+      <main className="max-w-2xl mx-auto space-y-4">
+        {results.length > 0 ? (
+          results.map((disease) => (
+            <div key={disease.id} className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+              <div className="flex justify-between items-start mb-3">
+                <h3 className="text-xl font-bold text-slate-800">{disease.name}</h3>
+                <span className={`px-3 py-1 rounded-full text-xs font-bold ${disease.color}`}>
+                  紧急程度: {disease.severity}
+                </span>
+              </div>
+              <p className="text-slate-600 mb-4 text-sm">典型症状: {disease.symptoms}</p>
+              <div className="bg-slate-50 p-4 rounded-xl flex items-start gap-3">
+                <ShieldCheck className="w-5 h-5 text-blue-500 mt-0.5" />
+                <p className="text-sm text-slate-700 leading-relaxed">
+                  <span className="font-semibold">专业建议:</span> {disease.advice}
+                </p>
+              </div>
+            </div>
+          ))
+        ) : query.length > 0 ? (
+          <div className="text-center py-10 text-slate-400">
+            未发现匹配症状，若猫咪状态不佳请及时就医。
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-4">
+             <div className="bg-orange-50 p-6 rounded-3xl text-center">
+                <AlertTriangle className="mx-auto text-orange-400 mb-2" />
+                <p className="text-sm font-medium text-orange-700">紧急避险指南</p>
+             </div>
+             <div className="bg-blue-50 p-6 rounded-3xl text-center">
+                <Clock className="mx-auto text-blue-400 mb-2" />
+                <p className="text-sm font-medium text-blue-700">附近宠物医院</p>
+             </div>
+          </div>
+        )}
+      </main>
+
+      <footer className="text-center mt-12 text-xs text-slate-400">
+        * 本工具仅供 UI/UX 演示使用，不能替代专业兽医诊断。
+      </footer>
+    </div>
+  );
 }
-
-.container{
-background:white;
-padding:40px;
-border-radius:18px;
-width:420px;
-box-shadow:0 15px 40px rgba(0,0,0,0.08);
-}
-
-h1{
-text-align:center;
-margin-bottom:10px;
-}
-
-.subtitle{
-text-align:center;
-color:#666;
-margin-bottom:30px;
-font-size:14px;
-}
-
-input{
-width:100%;
-padding:14px;
-border-radius:10px;
-border:1px solid #ddd;
-font-size:16px;
-box-sizing:border-box;
-}
-
-button{
-width:100%;
-padding:14px;
-margin-top:15px;
-border:none;
-border-radius:10px;
-background:#5b7cff;
-color:white;
-font-weight:600;
-font-size:16px;
-cursor:pointer;
-}
-
-button:hover{
-background:#4666e0;
-}
-
-.results{
-margin-top:25px;
-}
-
-.result-card{
-background:#f7f9fc;
-padding:15px;
-border-radius:10px;
-margin-top:10px;
-}
-
-.result-title{
-font-weight:bold;
-margin-bottom:5px;
-}
-
-.disclaimer{
-margin-top:25px;
-font-size:12px;
-color:#888;
-text-align:center;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="container">
-
-<h1>🐱 Cat Health Checker</h1>
-
-<div class="subtitle">
-Enter your cat's symptom to see possible causes
-</div>
-
-<input id="symptomInput" placeholder="e.g. vomiting, sneezing">
-
-<button onclick="checkSymptoms()">
-Check Symptoms
-</button>
-
-<div id="results" class="results"></div>
-
-<div class="disclaimer">
-This tool is not a medical diagnosis. Please consult a veterinarian if symptoms persist.
-</div>
-
-</div>
-
-<script>
-
-const database = {
-
-vomiting:[
-"Hairball blockage",
-"Food intolerance",
-"Gastroenteritis",
-"Poison ingestion"
-],
-
-sneezing:[
-"Upper respiratory infection",
-"Allergy",
-"Nasal inflammation"
-],
-
-diarrhea:[
-"Parasites",
-"Intestinal infection",
-"Food allergy"
-],
-
-lethargy:[
-"Infection",
-"Pain",
-"Anemia",
-"Organ disease"
-],
-
-loss of appetite:[
-"Dental problems",
-"Liver disease",
-"Kidney disease",
-"Stress"
-]
-
-}
-
-function checkSymptoms(){
-
-let input=document.getElementById("symptomInput").value.toLowerCase()
-
-let results=document.getElementById("results")
-
-results.innerHTML=""
-
-if(database[input]){
-
-database[input].forEach(problem=>{
-
-results.innerHTML+=`
-<div class="result-card">
-<div class="result-title">${problem}</div>
-Possible cause related to symptom: ${input}
-</div>
-`
-
-})
-
-}else{
-
-results.innerHTML=`<div class="result-card">No data yet for this symptom.</div>`
-
-}
-
-}
-
-</script>
-
-</body>
-</html>
