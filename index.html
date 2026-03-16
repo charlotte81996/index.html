@@ -1,52 +1,187 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>猫咪健康助手</title>
+<title>Cat Health Checker</title>
+
 <style>
-  body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
-  h1 { color: #333; }
-  input, button { padding: 10px; font-size: 16px; margin-top: 10px; }
-  #results { margin-top: 20px; }
+
+body{
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+background:#eef2f7;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+margin:0;
+}
+
+.container{
+background:white;
+padding:40px;
+border-radius:18px;
+width:420px;
+box-shadow:0 15px 40px rgba(0,0,0,0.08);
+}
+
+h1{
+text-align:center;
+margin-bottom:10px;
+}
+
+.subtitle{
+text-align:center;
+color:#666;
+margin-bottom:30px;
+font-size:14px;
+}
+
+input{
+width:100%;
+padding:14px;
+border-radius:10px;
+border:1px solid #ddd;
+font-size:16px;
+box-sizing:border-box;
+}
+
+button{
+width:100%;
+padding:14px;
+margin-top:15px;
+border:none;
+border-radius:10px;
+background:#5b7cff;
+color:white;
+font-weight:600;
+font-size:16px;
+cursor:pointer;
+}
+
+button:hover{
+background:#4666e0;
+}
+
+.results{
+margin-top:25px;
+}
+
+.result-card{
+background:#f7f9fc;
+padding:15px;
+border-radius:10px;
+margin-top:10px;
+}
+
+.result-title{
+font-weight:bold;
+margin-bottom:5px;
+}
+
+.disclaimer{
+margin-top:25px;
+font-size:12px;
+color:#888;
+text-align:center;
+}
+
 </style>
+
 </head>
+
 <body>
 
-<h1>猫咪健康助手</h1>
-<p>输入猫咪的不适症状（如：呕吐、食欲不振、打喷嚏）：</p>
-<input type="text" id="symptomInput" placeholder="输入症状">
-<button onclick="checkSymptoms()">查询可能问题</button>
+<div class="container">
 
-<div id="results"></div>
+<h1>🐱 Cat Health Checker</h1>
+
+<div class="subtitle">
+Enter your cat's symptom to see possible causes
+</div>
+
+<input id="symptomInput" placeholder="e.g. vomiting, sneezing">
+
+<button onclick="checkSymptoms()">
+Check Symptoms
+</button>
+
+<div id="results" class="results"></div>
+
+<div class="disclaimer">
+This tool is not a medical diagnosis. Please consult a veterinarian if symptoms persist.
+</div>
+
+</div>
 
 <script>
-const symptomDatabase = {
-  "呕吐": ["胃肠炎", "食物不耐受", "毛球堵塞", "中毒"],
-  "食欲不振": ["牙齿问题", "肝脏疾病", "肾脏疾病", "压力"],
-  "打喷嚏": ["呼吸道感染", "鼻炎", "过敏"],
-  "拉稀": ["寄生虫感染", "肠炎", "食物过敏"],
-  "咳嗽": ["呼吸道感染", "心脏病", "气管问题"],
-  "嗜睡": ["感染", "贫血", "疼痛", "甲状腺问题"]
-};
 
-function checkSymptoms() {
-  const input = document.getElementById("symptomInput").value.trim();
-  const resultsDiv = document.getElementById("results");
-  
-  if (!input) {
-    resultsDiv.innerHTML = "<p style='color:red;'>请输入症状！</p>";
-    return;
-  }
-  
-  const matchedProblems = symptomDatabase[input];
-  
-  if (matchedProblems) {
-    resultsDiv.innerHTML = `<p>猫咪出现 <strong>${input}</strong> 的可能问题：</p><ul>${matchedProblems.map(p => `<li>${p}</li>`).join('')}</ul>`;
-  } else {
-    resultsDiv.innerHTML = `<p>抱歉，暂时没有关于 <strong>${input}</strong> 的信息。</p>`;
-  }
+const database = {
+
+vomiting:[
+"Hairball blockage",
+"Food intolerance",
+"Gastroenteritis",
+"Poison ingestion"
+],
+
+sneezing:[
+"Upper respiratory infection",
+"Allergy",
+"Nasal inflammation"
+],
+
+diarrhea:[
+"Parasites",
+"Intestinal infection",
+"Food allergy"
+],
+
+lethargy:[
+"Infection",
+"Pain",
+"Anemia",
+"Organ disease"
+],
+
+loss of appetite:[
+"Dental problems",
+"Liver disease",
+"Kidney disease",
+"Stress"
+]
+
 }
+
+function checkSymptoms(){
+
+let input=document.getElementById("symptomInput").value.toLowerCase()
+
+let results=document.getElementById("results")
+
+results.innerHTML=""
+
+if(database[input]){
+
+database[input].forEach(problem=>{
+
+results.innerHTML+=`
+<div class="result-card">
+<div class="result-title">${problem}</div>
+Possible cause related to symptom: ${input}
+</div>
+`
+
+})
+
+}else{
+
+results.innerHTML=`<div class="result-card">No data yet for this symptom.</div>`
+
+}
+
+}
+
 </script>
 
 </body>
